@@ -15,28 +15,28 @@ export default function MovieDetailPage({
         name: "Parasite",
         director: "Bong Joon-ho",
         year: 2019,
-        genre: new Set<string>(["comedy", "thriller", "drama"]),
+        genre: ["comedy", "thriller", "drama"],
         img: "/img/parasite.jpg",
     });
     mockMovies.set("002", {
         name: "Decision to Leave",
         director: "Park Chan-wook",
         year: 2022,
-        genre: new Set<string>(["mystery", "romance", "thriller"]),
+        genre: ["mystery", "romance", "thriller"],
         img: "/img/decision-to-leave.jpg",
     });
     mockMovies.set("003", {
         name: "Logan",
         director: "James Mangold",
         year: 2018,
-        genre: new Set<string>(["drama", "science fiction", "action"]),
+        genre: ["drama", "science fiction", "action"],
         img: "/img/logan.jpg",
     });
     mockMovies.set("004", {
         name: "Past Lives",
         director: "Celine Song",
         year: 2023,
-        genre: new Set<string>(["drama", "romance"]),
+        genre: ["drama", "romance"],
         img: "/img/past-lives.jpg",
     });
 

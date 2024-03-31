@@ -12,6 +12,7 @@ export const cartSlice = createSlice({
     initialState,
     reducers: {
         addMovie: (state, action: PayloadAction<MovieItem>) => {
+            console.log("Adding movie", action.payload);
             state.movieItems.push(action.payload);
         },
         removeMovie: (state, action: PayloadAction<MovieItem>) => {

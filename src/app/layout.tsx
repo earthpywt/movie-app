@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import TopMenu from "@/components/TopMenu";
 import ReduxProvider from "@/redux/ReduxProvider";
+import { MovieProvider } from "@/components/MovieContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +20,12 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={inter.className}>
-                <ReduxProvider>
-                    <TopMenu />
-                    {children}
-                </ReduxProvider>
+                <MovieProvider>
+                    <ReduxProvider>
+                        <TopMenu />
+                        {children}
+                    </ReduxProvider>
+                </MovieProvider>
             </body>
         </html>
     );

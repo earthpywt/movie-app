@@ -3,6 +3,7 @@ import { useAppSelector } from "@/redux/store";
 
 export default function Watchlist() {
     const movieItems = useAppSelector((state) => state.cartSlice.movieItems);
+    console.log("Movie items in watchlist", movieItems);
     return (
         <>
             {movieItems.map((movieItem) => (

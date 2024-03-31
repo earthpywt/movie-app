@@ -1,41 +1,49 @@
 "use client";
-import { useReducer } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import Link from "next/link";
+import { Convert, Movie } from "@/interfaces/movie";
+import { useMovies } from "./MovieContext";
 
 export default function MoviePanel() {
-    const compareReducer = (
-        compareList: Set<string>,
-        action: { type: string; carName: string }
-    ) => {
-        switch (action.type) {
-            case "add": {
-                return new Set(compareList.add(action.carName));
-            }
-            case "remove": {
-                compareList.delete(action.carName);
-                return new Set(compareList);
-            }
-            default:
-                return compareList;
+    //const [movies, setMovies] = useState<Movie[]>([]);
+    const { movies, setMovies } = useMovies();
+
+    useEffect(() => {
+        const fetchMovies = async () => {
+            const movieIds = [
+                "tt3315342",
+                "tt13238346",
+                "tt6751668",
+                "tt12477480",
+            ]; // Example IMDb IDs
+            const apiKey = "255102ad"; // Replace with your OMDb API key
+            const requests = movieIds.map((id) =>
+                fetch(`https://www.omdbapi.com/?i=${id}&apikey=${apiKey}`).then(
+                    (response) => response.json()
+                )
+            );
+
+            const responses = await Promise.all(requests);
+
+            // Convert each JSON response to the Movie interface
+            // const movies: Movie[] = responses.map((response) =>
+            //     Convert.toMovie(JSON.stringify(response))
+            // );
+
+            // setMovies(movies);
+            const moviesToUpdate = responses.map((response) =>
+                Convert.toMovie(JSON.stringify(response))
+            );
+
+            setMovies(moviesToUpdate);
+        };
+
+        if (movies.length === 0) {
+            fetchMovies().catch(console.error);
         }
-    };
-
-    const [compareList, dispatchCompare] = useReducer(
-        compareReducer,
-        new Set<string>()
-    );
-
-    const mockMovies = [
-        { mid: "001", name: "Parasite", img: "/img/parasite.jpg" },
-        {
-            mid: "002",
-            name: "Decision to Leave",
-            img: "/img/decision-to-leave.jpg",
-        },
-        { mid: "003", name: "Logan", img: "/img/logan.jpg" },
-        { mid: "004", name: "Past Lives", img: "/img/past-lives.jpg" },
-    ];
+    }, [movies, setMovies]);
+    //console.log(movies);
 
     return (
         <div>
@@ -49,21 +57,15 @@ export default function MoviePanel() {
                     alignContent: "space-around",
                 }}
             >
-                {/* <ProductCard name="Parasite" img="/img/parasite.jpg" />
-                <ProductCard
-                    name="Decision to Leave"
-                    img="/img/decision-to-leave.jpg"
-                />
-                <ProductCard name="Logan" img="/img/logan.jpg" />
-                <ProductCard name="Past Lives" img="/img/past-lives.jpg" /> */}
-                {mockMovies.map((movieItem) => (
-                    <Link href={`/movie/${movieItem.mid}`} className="w-1/5">
+                {movies.map((movieItem) => (
+                    <Link
+                        key={movieItem.imdbID}
+                        href={`/movie/${movieItem.imdbID}`}
+                        className="w-1/5"
+                    >
                         <ProductCard
-                            name={movieItem.name}
-                            img={movieItem.img}
-                            onCompare={(car: string) =>
-                                dispatchCompare({ type: "add", carName: car })
-                            }
+                            name={movieItem.Title}
+                            img={movieItem.Poster}
                         />
                     </Link>
                 ))}

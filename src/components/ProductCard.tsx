@@ -4,16 +4,10 @@ import InteractiveCard from "./InteractiveCard";
 
 export default function ProductCard({
     name,
-    director,
-    year,
-    genre,
     img,
     onCompare,
 }: {
     name: string;
-    director: string;
-    year: number;
-    genre: string[];
     img: string;
     onCompare?: Function;
 }) {
@@ -24,8 +18,10 @@ export default function ProductCard({
                     src={img}
                     alt="Parasite"
                     fill={true}
-                    objectFit="cover"
+                    sizes="(max-width: 768px) 50vw, 20vw"
+                    // objectFit="cover"
                     className="object-cover rounded-t-lg"
+                    style={{ objectFit: "cover" }}
                 />
             </div>
             <div className="w-full h-[30%] p-[10px] text-black">{name}</div>
