@@ -1,91 +1,56 @@
 "use client";
 import Image from "next/image";
+import { useParams } from "next/navigation";
+import { useMovies } from "@/components/MovieContext"; // Adjust the import path as needed
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { addMovie } from "@/redux/features/cartSlice";
-import { MovieItem } from "../../../../interfaces";
 
-export default function MovieDetailPage({
-    params,
-}: {
-    params: { mid: string };
-}) {
-    const mockMovies = new Map();
-    mockMovies.set("001", {
-        name: "Parasite",
-        director: "Bong Joon-ho",
-        year: 2019,
-        genre: ["comedy", "thriller", "drama"],
-        img: "/img/parasite.jpg",
-    });
-    mockMovies.set("002", {
-        name: "Decision to Leave",
-        director: "Park Chan-wook",
-        year: 2022,
-        genre: ["mystery", "romance", "thriller"],
-        img: "/img/decision-to-leave.jpg",
-    });
-    mockMovies.set("003", {
-        name: "Logan",
-        director: "James Mangold",
-        year: 2018,
-        genre: ["drama", "science fiction", "action"],
-        img: "/img/logan.jpg",
-    });
-    mockMovies.set("004", {
-        name: "Past Lives",
-        director: "Celine Song",
-        year: 2023,
-        genre: ["drama", "romance"],
-        img: "/img/past-lives.jpg",
-    });
+export default function MovieDetailPage() {
+    const params = useParams();
+    const { movies } = useMovies();
+
+    // Find the specific movie by IMDb ID
+    const movie = movies.find((movie) => movie.imdbID === params.mid);
 
     const dispatch = useDispatch<AppDispatch>();
     const addToWatchlist = () => {
-        const item: MovieItem = {
-            movieId: params.mid,
-            name: mockMovies.get(params.mid).name,
-            director: mockMovies.get(params.mid).director,
-            year: mockMovies.get(params.mid).year,
-            genre: mockMovies.get(params.mid).genre,
-        };
-        dispatch(addMovie(item));
+        if (!movie) return; // Guard clause in case movie is not found
+        const yearAsNumber = parseInt(movie.Year, 10) || 0;
+        // Dispatch the action with the movie details
+        dispatch(
+            addMovie({
+                movieId: movie.imdbID,
+                name: movie.Title,
+                director: movie.Director, // Adjust these fields based on your actual movie object structure
+                year: yearAsNumber,
+                genre: movie.Genre ? movie.Genre.split(", ") : [],
+            })
+        );
     };
+
+    if (!movie) {
+        return <div>Movie not found</div>; // Render something if the movie isn't found
+    }
 
     return (
         <main className="text-center p-5">
             <div className="flex flex-row my-5">
                 <Image
-                    src={mockMovies.get(params.mid).img}
-                    alt="Movie picture"
-                    width={0}
-                    height={0}
+                    src={movie.Poster}
+                    alt={movie.Title}
+                    width={300} // Adjust the size as necessary
+                    height={450}
                     sizes="100vw"
-                    className="rounded-lg w-[30%] bg-black"
+                    className="rounded-lg"
                 />
             </div>
-            <div className="text-md mx-5">
-                {mockMovies.get(params.mid).name}
-            </div>
-            <div className="text-md mx-5">
-                Directed by: {mockMovies.get(params.mid).director}
-            </div>
-            <div className="text-md mx-5">
-                Year: {mockMovies.get(params.mid).year}
-            </div>
-            <div className="text-md mx-5">
-                {/* {mockMovies.get(params.mid).genre} */}
-                Genre:{" "}
-                {(Array.from(mockMovies.get(params.mid).genre) as string[])
-                    .map(
-                        (genre) =>
-                            genre.charAt(0).toUpperCase() + genre.slice(1)
-                    )
-                    .join(", ")}
-            </div>
+            <div className="text-md mx-5">{movie.Title}</div>
+            <div className="text-md mx-5">Directed by: {movie.Director}</div>
+            <div className="text-md mx-5">Year: {movie.Year}</div>
+            <div className="text-md mx-5">Genre: {movie.Genre}</div>
             <button
-                className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-2 
-            shadow-sm text-white"
+                className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-2 shadow-sm text-white"
                 onClick={addToWatchlist}
             >
                 Add to Watchlist

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { MovieItem } from "../../../interfaces";
+import toast from "react-hot-toast";
 
 type CartState = {
     movieItems: MovieItem[];
@@ -12,18 +13,21 @@ export const cartSlice = createSlice({
     initialState,
     reducers: {
         addMovie: (state, action: PayloadAction<MovieItem>) => {
-            console.log("Adding movie", action.payload);
-            state.movieItems.push(action.payload);
+            // console.log("Adding movie", action.payload);
+            // state.movieItems.push(action.payload);
+            const exists = state.movieItems.some(
+                (movieItem) => movieItem.movieId === action.payload.movieId
+            );
+            if (!exists) {
+                // If the movie doesn't exist, add it to the array
+                state.movieItems.push(action.payload);
+                toast.success(`${action.payload.name} added to watchlist!`);
+            }
         },
-        removeMovie: (state, action: PayloadAction<MovieItem>) => {
-            const remainItems = state.movieItems.filter((obj) => {
-                return (
-                    obj.name !== action.payload.name ||
-                    obj.director !== action.payload.director ||
-                    obj.year !== action.payload.year
-                );
-            });
-            state.movieItems = remainItems;
+        removeMovie: (state, action: PayloadAction<{ movieId: string }>) => {
+            state.movieItems = state.movieItems.filter(
+                (movieItem) => movieItem.movieId !== action.payload.movieId
+            );
         },
     },
 });

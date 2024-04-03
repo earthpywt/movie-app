@@ -4,6 +4,7 @@ import "./globals.css";
 import TopMenu from "@/components/TopMenu";
 import ReduxProvider from "@/redux/ReduxProvider";
 import { MovieProvider } from "@/components/MovieContext";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,12 +21,13 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={inter.className}>
-                <MovieProvider>
-                    <ReduxProvider>
+                <ReduxProvider>
+                    <MovieProvider>
                         <TopMenu />
                         {children}
-                    </ReduxProvider>
-                </MovieProvider>
+                        <Toaster position="top-center" />
+                    </MovieProvider>
+                </ReduxProvider>
             </body>
         </html>
     );
